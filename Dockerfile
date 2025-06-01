@@ -3,6 +3,7 @@ FROM ubuntu:22.04
 
 # Set environment variables to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
+ENV Home "${HOMEDIR}"
 
 # Install necessary dependencies
 RUN apt-get update && \
@@ -32,7 +33,11 @@ RUN apt-get update && \
     expect \
     curl \
     sudo \
-    fuse
+    fuse \
+    qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
+    qtdeclarative5-dev qml-module-qtquick2 \
+    wget \
+    vim
 
 # Create a new user and set their home directory
 RUN useradd -m -s /bin/bash fex
@@ -55,13 +60,13 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
 
 WORKDIR /home/fex/FEX/Build
 
+# Run ninja install and enable binfmt_misc without systemd
 RUN sudo ninja install && \
-    sudo ninja binfmt_misc_32 && \
-    sudo ninja binfmt_misc_64
+    sudo update-binfmts --enable
 
 RUN sudo useradd -m -s /bin/bash steam
 
-RUN sudo apt install wget
+#RUN sudo apt install wget
 
 USER root
 
@@ -88,4 +93,15 @@ WORKDIR /home/steam/Steam
 # Download and run SteamCMD
 RUN curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
 
-ENTRYPOINT FEXBash ./steamcmd.sh
+RUN sed -i '/ulimit -n/d' ./steamcmd.sh
+
+RUN FEXInterpreter ./steamcmd.sh +@sSteamCmdForcePlatformType linux \
+    +login anonymous \
+    +force_install_dir /home/steam/Zomboid/ \
+    +app_update 380870 validate \
+    +quit > /dev/null
+
+EXPOSE 16261-16262/udp \
+   27015/tcp
+
+ENTRYPOINT ["/bin/sh"]
