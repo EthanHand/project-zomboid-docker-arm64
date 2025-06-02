@@ -43,19 +43,19 @@ To build the Docker image, follow these steps:
 3. Build the Docker image using the provided `Dockerfile`:
 
    ```bash
-   docker build -t project-zomboid-arm64 .
+   docker build -t project-zomboid-arm64:main .
    ```
 
    This command will build the Docker image named "project-zomboid-arm64"
 
-## Running the SteamCMD Docker Container
+## Running the Project Zomboid Docker Container
 
-Once you've built or pulled the Docker image, you can run the SteamCMD container using the following steps:
+Once you've built or pulled the Docker image, you can run the container using the following steps:
 
-1. Run the SteamCMD container:
+1. Run the Project Zomboid container:
 
    ```bash
-   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64
+   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64:main
    ```
 
    This command starts an interactive session inside the container.
@@ -108,5 +108,6 @@ Once you've built or pulled the Docker image, you can run the SteamCMD container
 
 1. If you need to make modifications to the container the root password is: `steamcmd`.
 
+- [DockerHub Image](https://hub.docker.com/r/etheth888/project-zomboid-arm64)
 - [SteamCMD Documentation](https://developer.valvesoftware.com/wiki/SteamCMD)
 - [Docker Documentation](https://docs.docker.com/)
