@@ -43,10 +43,10 @@ To build the Docker image, follow these steps:
 3. Build the Docker image using the provided `Dockerfile`:
 
    ```bash
-   docker build -t pzomboid .
+   docker build -t project-zomboid-arm64 .
    ```
 
-   This command will build the Docker image named "pzomboid"
+   This command will build the Docker image named "project-zomboid-arm64"
 
 ## Running the SteamCMD Docker Container
 
@@ -55,7 +55,7 @@ Once you've built or pulled the Docker image, you can run the SteamCMD container
 1. Run the SteamCMD container:
 
    ```bash
-   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp pzomboid
+   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64
    ```
 
    This command starts an interactive session inside the container.
