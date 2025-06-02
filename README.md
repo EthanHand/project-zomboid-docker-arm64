@@ -1,6 +1,6 @@
-# steamcmd-docker-arm64
+# project-zomboid-docker-arm64
 
-## [Get it from docker hub](https://hub.docker.com/r/teriyakigod/steamcmd)
+## [Get it from docker hub](https://hub.docker.com/r/etheth888/project-zomboid-arm64)
 
 This repository provides a Docker image for running SteamCMD on ARM64 architecture. SteamCMD is a command-line utility that allows you to install and manage dedicated game servers via Steam.
 
@@ -9,6 +9,20 @@ This repository provides a Docker image for running SteamCMD on ARM64 architectu
 - A machine or environment with ARM64 architecture support.
 - Docker installed on your ARM64 system.
 - 16261-16262 Udp ports open
+
+## Pulling from DockerHub
+
+1. If using Podman
+
+   ```bash
+   podman pull docker.io/etheth888/project-zomboid-arm64:main
+   ```
+
+2. Otherwise
+
+   ```bash
+   docker pull etheth888/project-zomboid-arm64:main
+   ```
 
 ## Building the Docker Image
 
@@ -29,19 +43,19 @@ To build the Docker image, follow these steps:
 3. Build the Docker image using the provided `Dockerfile`:
 
    ```bash
-   sudo docker build -t pzomboid .
+   docker build -t pzomboid .
    ```
 
    This command will build the Docker image named "pzomboid"
 
 ## Running the SteamCMD Docker Container
 
-Once you've built the Docker image, you can run the SteamCMD container using the following steps:
+Once you've built or pulled the Docker image, you can run the SteamCMD container using the following steps:
 
 1. Run the SteamCMD container:
 
    ```bash
-   sudo docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp pzomboid
+   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp pzomboid
    ```
 
    This command starts an interactive session inside the container.
