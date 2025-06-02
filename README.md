@@ -2,7 +2,7 @@
 
 ## [Get it from docker hub](https://hub.docker.com/r/etheth888/project-zomboid-arm64)
 
-This repository provides a Docker image for running SteamCMD on ARM64 architecture. SteamCMD is a command-line utility that allows you to install and manage dedicated game servers via Steam.
+This repository provides a Docker image for running a Project Zomboid Dedicated Server using SteamCMD on ARM64 architecture. SteamCMD is a command-line utility that allows you to install and manage dedicated game servers via Steam.
 
 ## Prerequisites
 
