@@ -9,6 +9,7 @@ This repository provides a Docker image for running a Project Zomboid Dedicated 
 - A machine or environment with ARM64 architecture support.
 - Docker installed on your ARM64 system.
 - 16261-16262 Udp ports open
+- 27015 TCP port open (for steamcmd)
 
 ## Pulling from DockerHub
 
