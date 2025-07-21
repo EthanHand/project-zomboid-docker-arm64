@@ -3,7 +3,6 @@ FROM ubuntu:22.04
 
 # Set environment variables to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
-ENV Home "${HOMEDIR}"
 
 # Install necessary dependencies
 RUN apt-get update && \
@@ -99,8 +98,8 @@ RUN curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.t
 RUN sed -i '/ulimit -n/d' ./steamcmd.sh
 
 RUN FEXInterpreter ./steamcmd.sh +@sSteamCmdForcePlatformType linux \
-    +login anonymous \
     +force_install_dir /home/steam/Zomboid/ \
+    +login anonymous \
     +app_update 380870 validate \
     +quit > /dev/null
 
