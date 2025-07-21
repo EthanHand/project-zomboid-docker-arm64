@@ -107,4 +107,4 @@ RUN FEXInterpreter ./steamcmd.sh +@sSteamCmdForcePlatformType linux \
 EXPOSE 16261-16262/udp \
    27015/tcp
 
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["/bin/bash"]
