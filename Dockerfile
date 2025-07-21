@@ -37,7 +37,8 @@ RUN apt-get update && \
     qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
     qtdeclarative5-dev qml-module-qtquick2 \
     wget \
-    vim
+    vim \
+    tmux
 
 # Create a new user and set their home directory
 RUN useradd -m -s /bin/bash fex
@@ -71,6 +72,8 @@ RUN sudo useradd -m -s /bin/bash steam
 USER root
 
 RUN echo 'root:steamcmd' | chpasswd
+
+RUN echo 'steam:steamcmd' | chpasswd
 
 USER steam
 
