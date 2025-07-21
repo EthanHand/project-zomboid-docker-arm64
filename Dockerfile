@@ -107,4 +107,6 @@ RUN FEXInterpreter ./steamcmd.sh +@sSteamCmdForcePlatformType linux \
 EXPOSE 16261-16262/udp \
    27015/tcp
 
+WORKDIR /home/steam/Zomboid
+
 ENTRYPOINT ["/bin/bash"]
