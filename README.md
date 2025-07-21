@@ -63,17 +63,12 @@ Once you've built or pulled the Docker image, you can run the container using th
    When you start the container the steamcmd runs and downloads Project Zomboid Dedicated Server automatically.
    The server is downloaded to /home/steam/Zomboid/
 
-2. Navigate to the server directory
-
-   ```bash
-   cd /home/steam/Zomboid/
-   ```
-3. Start the server to generate server files
+2. Start the server to generate server files
 
    ```bash
    FEXBash ./start-server.sh
    ```
-4. Close the server and make changes you want in /home/steam/Zomboid/Server/
+3. Close the server and make changes you want in /home/steam/Zomboid/Server/
 
    ```bash
    vim servertest.ini
@@ -104,6 +99,25 @@ Once you've built or pulled the Docker image, you can run the container using th
   ```bash
   docker restart <container-id>
   ```
+
+## If using Tmux
+
+Running tmux is often better for long-running processes as you can access the container while the process is being run.
+However, tmux combined with FEXBash emulation appears to SIGSEV when starting the server. To fix this:
+
+1. Run this before ./start-server.sh
+
+   ```bash
+   export JAVA_TOOL_OPTIONS="-Xint"
+   ```
+
+This removes JVM JIT compilation optimization and forces interpreted line-by-line binaries. It should reduce performance in exchange for stability. However, the performance change is likely not too significant because it would be bottlenecked by emulation anyway.
+
+2. To unset
+
+   ```bash
+   unset JAVA_TOOL_OPTIONS
+   ```
 
 ## Additional Information
 
