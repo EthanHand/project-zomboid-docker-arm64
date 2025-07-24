@@ -126,7 +126,7 @@ With tmux you should be able to exit the docker container without detaching and 
 
 ## Enter exited Docker Container
   ```bash
-  docker exec -it zomboid-server
+  docker exec -it zomboid-server bash
   ```
 
 ## Additional Information
