@@ -103,21 +103,31 @@ Once you've built or pulled the Docker image, you can run the container using th
 ## If using Tmux
 
 Running tmux is often better for long-running processes as you can access the container while the process is being run.
-However, tmux combined with FEXBash emulation appears to SIGSEV when starting the server. To fix this:
 
-1. Run this before ./start-server.sh
+1. In the container run:
 
-   ```bash
-   export JAVA_TOOL_OPTIONS="-Xint"
-   ```
+  ```bash
+  tmux new -s Server
+  ```
 
-This removes JVM JIT compilation optimization and forces interpreted line-by-line binaries. It should reduce performance in exchange for stability. However, the performance change is likely not too significant because it would be bottlenecked by emulation anyway.
+You can now start the server in the tmux window.
 
-2. To unset
+## Detach from session
+  ```bash
+  Ctrl + b, d
+  ```
 
-   ```bash
-   unset JAVA_TOOL_OPTIONS
-   ```
+## Attach to session
+  ```bash
+  tmux a
+  ```
+
+With tmux you should be able to exit the docker container without detaching and without it closing.
+
+## Enter exited Docker Container
+  ```bash
+  docker exec -it zomboid-server
+  ```
 
 ## Additional Information
 
@@ -126,3 +136,4 @@ This removes JVM JIT compilation optimization and forces interpreted line-by-lin
 - [DockerHub Image](https://hub.docker.com/r/etheth888/project-zomboid-arm64)
 - [SteamCMD Documentation](https://developer.valvesoftware.com/wiki/SteamCMD)
 - [Docker Documentation](https://docs.docker.com/)
+- [Tmux Quick Reference](https://tmuxcheatsheet.com)
