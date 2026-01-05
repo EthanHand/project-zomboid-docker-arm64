@@ -93,4 +93,4 @@ EXPOSE 16261-16262/udp 27015/tcp
 
 WORKDIR /home/steam/Zomboid
 
-ENTRYPOINT ["\bin\bash"]
+ENTRYPOINT ["/bin/bash"]
