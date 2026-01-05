@@ -75,6 +75,10 @@ FOR BUILD 42
    When you start the container the steamcmd runs and downloads Project Zomboid Dedicated Server automatically.
    The server is downloaded to /home/steam/Zomboid/
 
+FOR BUILD 42
+
+The server sigsev's on player connection adding "-Xint", to ProjectZomboid64.json lets it work but its incredibly slow
+
 2. Start the server to generate server files
 
    ```bash
