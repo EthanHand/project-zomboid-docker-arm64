@@ -83,8 +83,8 @@ RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
 # Install Project Zomboid (Using the primed environment)
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
     +@sSteamCmdForcePlatformType linux \
-    +login anonymous \
     +force_install_dir /home/steam/Zomboid/ \
+    +login anonymous \
     +app_update 380870 validate \
     +quit && \
     rm -rf /home/steam/Steam/logs /home/steam/Steam/appcache
