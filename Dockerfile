@@ -85,7 +85,7 @@ RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
-    +app_update 380870 validate \
+    +app_update 380870 -beta 42.13.1 validate \
     +quit && \
     rm -rf /home/steam/Steam/logs /home/steam/Steam/appcache
 
