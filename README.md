@@ -78,7 +78,7 @@ FOR BUILD 42
 2. Start the server to generate server files
 
    ```bash
-   FEXInterpreter ./start-server.sh -Xms4g -Xmx12g
+   FEXInterpreter ./start-server.sh
    ```
 3. Close the server and make changes you want in /home/steam/Zomboid/Server/
 

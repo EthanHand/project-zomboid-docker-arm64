@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /home/fex
 RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     cd FEX && \
-    git checkout a08a6ce5de51f5e625357ecaed46c463aa1e3c99 && \
     mkdir Build && cd Build && \
     CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
     -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -G Ninja .. && \
