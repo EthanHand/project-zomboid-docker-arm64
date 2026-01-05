@@ -66,12 +66,21 @@ Once you've built or pulled the Docker image, you can run the container using th
 2. Start the server to generate server files
 
    ```bash
-   FEXBash ./start-server.sh
+   FEXInterpreter ./start-server.sh -Xms4g -Xmx12g
    ```
 3. Close the server and make changes you want in /home/steam/Zomboid/Server/
 
    ```bash
-   vim servertest.ini
+   nano servertest.ini
+   ```
+
+## Exiting nano
+
+1. Press ctrl + x then y then enter to save with nano
+
+   ```bash
+   Ctrl + X
+   Y
    ```
 
 ## To detatch from the container
