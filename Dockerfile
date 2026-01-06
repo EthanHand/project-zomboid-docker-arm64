@@ -73,9 +73,14 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
-# Prime and Install Project Zomboid in one layer
-RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit || true && \
-    box86 /home/steam/Steam/linux32/steamcmd \
+# Update steamcmd.sh script to use box86
+RUN sed -i 's/exec "$SCOM"/exec box86 "$SCOM"/g' /home/steam/Steam/steamcmd.sh
+
+# Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
+RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit || true
+
+# Install Project Zomboid (Box86 for 32 bit steamcmd)
+RUN box86 /home/steam/Steam/linux32/steamcmd \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
