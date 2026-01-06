@@ -62,7 +62,7 @@ RUN dpkg --add-architecture armhf && \
 COPY --from=builder /usr/bin/box86 /usr/bin/box86
 COPY --from=builder /usr/bin/box64 /usr/bin/box64
 
-ENV DEBUGGER "/usr/local/bin/box86"
+ENV DEBUGGER "/usr/bin/box86"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:${LD_LIBRARY_PATH}"
 
 # Set up the steam user
@@ -82,11 +82,19 @@ RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
     ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
     ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
-# Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit
+# # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
+# RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit
 
-# Install Project Zomboid (Box86 for 32 bit steamcmd)
-RUN box86 /home/steam/Steam/linux32/steamcmd \
+# # Install Project Zomboid (Box86 for 32 bit steamcmd)
+# RUN box86 /home/steam/Steam/linux32/steamcmd \
+#     +@sSteamCmdForcePlatformType linux \
+#     +force_install_dir /home/steam/Zomboid/ \
+#     +login anonymous \
+#     +app_update 380870 -beta 42.13.1 validate \
+#     +quit
+
+RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
+    /home/steam/Steam/steamcmd.sh \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
