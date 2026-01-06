@@ -91,9 +91,10 @@ RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
     +app_update 380870 -beta 42.13.1 validate \
     +quit
 
+# Install NATIVE ARM64 Java 25
 RUN wget https://download.oracle.com/java/25/latest/jdk-25_linux-aarch64_bin.tar.gz && \
-    tar -xvf jdk-25_linux-aarch64_bin.tar.gz && \
-    mv jdk-25* /opt/jdk-25 && \
+    mkdir -p /opt/jdk-25 && \
+    tar -xzf jdk-25_linux-aarch64_bin.tar.gz -C /opt/jdk-25 --strip-components=1 && \
     rm jdk-25_linux-aarch64_bin.tar.gz
 
 # Set Environment Paths for the new Java
