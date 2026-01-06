@@ -37,22 +37,20 @@ ENV DEBIAN_FRONTEND=noninteractive
 #     -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -G Ninja .. && \
 #     ninja install
 
-# Install necessary dependencies for box64
+# Install necessary dependencies for box64 and box86
 RUN dpkg --add-architecture armhf && \
     apt-get update && apt-get install -y \
-    libsdl2-2.0-0 libepoxy0 libssl3 curl sudo wget nano tmux \
-    libc6:armhf libstdc++6:armhf \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install build dependencies for Box86 and Box64
-RUN dpkg --add-architecture armhf && apt-get update && apt-get install -y \
     git \
     cmake \
     ninja-build \
     build-essential \
     python3 \
+    # These provide the cross-compilation headers for armhf
     gcc-arm-linux-gnueabihf \
-    libc6-dev-armhf-cros
+    libc6-dev-armhf-cross \
+    # Standard 64-bit headers
+    libc6-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build Box86 (SteamCMD 32 bit)
 WORKDIR /build/box86
@@ -92,14 +90,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Add armhf architecture for 32-bit library support (SteamCMD needs this)
 RUN dpkg --add-architecture armhf && apt-get update && apt-get install -y \
-    libsdl2-2.0-0 libepoxy0 libssl3 \
-    curl \
-    sudo \
-    wget \
-    nano \
-    tmux \
+    curl sudo wget nano tmux ca-certificates \
+    openjdk-21-jdk-headless \
     # 32-bit libs for Box86/SteamCMD
     libc6:armhf libstdc++6:armhf libncurses5:armhf \
+    # 64-bit libs for Zomboid
+    libsdl2-2.0-0 libepoxy0 libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
