@@ -47,19 +47,37 @@ RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add BOTH armhf (for SteamCMD) and amd64 (for Zomboid x86_64 libs)
+# 1. Enable multiple architectures
 RUN dpkg --add-architecture armhf && \
-    dpkg --add-architecture amd64 && \
-    sed -i 's/Types: deb/Types: deb\nArchitectures: arm64 armhf/g' /etc/apt/sources.list.d/ubuntu.sources && \
-    echo "Types: deb\nURIs: http://archive.ubuntu.com/ubuntu/\nSuites: noble noble-updates noble-backports\nComponents: main universe\nArchitectures: amd64" > /etc/apt/sources.list.d/amd64.sources && \
-    echo "Types: deb\nURIs: http://security.ubuntu.com/ubuntu/\nSuites: noble-security\nComponents: main universe\nArchitectures: amd64" >> /etc/apt/sources.list.d/amd64.sources \
-    apt-get update && apt-get install -y \
+    dpkg --add-architecture amd64
+
+# 2. Configure Ubuntu 24.04 DEB822 Sources for Multi-Arch
+# We must specify that the native 'ubuntu.sources' only serves arm64/armhf
+RUN sed -i 's/Types: deb/Architectures: arm64 armhf\nTypes: deb/g' /etc/apt/sources.list.d/ubuntu.sources && \
+    # Now we create a specific source for the amd64 (x86_64) packages
+    echo "Types: deb\n\
+        URIs: http://archive.ubuntu.com/ubuntu/\n\
+        Suites: noble noble-updates noble-backports\n\
+        Components: main universe restricted multiverse\n\
+        Architectures: amd64\n\
+        Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" > /etc/apt/sources.list.d/amd64.sources && \
+# Add Security sources for amd64
+    echo "Types: deb\n\
+        URIs: http://security.ubuntu.com/ubuntu/\n\
+        Suites: noble-security\n\
+        Components: main universe restricted multiverse\n\
+        Architectures: amd64\n\
+        Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/amd64.sources
+
+# 3. Clean Update and Install
+RUN apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
-    # 32-bit ARM libs (Required for SteamCMD/Box86)
+    # 32-bit ARM libs (SteamCMD/Box86)
     libc6:armhf libstdc++6:armhf \
-    # 64-bit x86 libs (Required for Zomboid Build 42 / Box64)
+    # 64-bit x86 libs (Box64/Zomboid Natives)
     libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
     libsdl3-0:amd64 libsqlite3-0:amd64 \
+    # Native ARM Java (Box64-JVM optimized)
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
