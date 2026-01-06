@@ -78,9 +78,9 @@ RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
 # 3. SDK Symlinks
-RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
-    ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
-    ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
+# RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
+#     ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
+#     ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
 # Prime and Run SteamCMD in a single layer
 RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
@@ -92,16 +92,16 @@ RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
     +quit
 
 USER root
+RUN mkdir -p /usr/lib/x86_64-linux-gnu && \
+    ln -sf /home/steam/Zomboid/linux64/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so.6 && \
+    ln -sf /home/steam/Zomboid/linux64/libgcc_s.so.1 /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 && \
+    mkdir -p /home/steam/.steam/sdk64 && \
+    ln -sf /home/steam/Zomboid/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
-# Install NATIVE ARM64 Java 25
-RUN wget https://download.oracle.com/java/25/latest/jdk-25_linux-aarch64_bin.tar.gz && \
-    mkdir -p /opt/jdk-25 && \
-    tar -xzf jdk-25_linux-aarch64_bin.tar.gz -C /opt/jdk-25 --strip-components=1 && \
-    rm jdk-25_linux-aarch64_bin.tar.gz
-
-# Set Environment Paths for the new Java
-ENV JAVA_HOME=/opt/jdk-25
-ENV PATH=$JAVA_HOME/bin:$PATH
+# Box64 Optimizations for Project Zomboid
+ENV BOX64_DYNAREC_STRONGMEM=1
+ENV BOX64_LD_LIBRARY_PATH="/home/steam/Zomboid/linux64:/home/steam/Zomboid/natives:/usr/lib/x86_64-linux-gnu"
+ENV LD_LIBRARY_PATH="/home/steam/Zomboid/linux64:/home/steam/Zomboid/natives"
 
 USER steam
 WORKDIR /home/steam
