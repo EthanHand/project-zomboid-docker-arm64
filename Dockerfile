@@ -82,11 +82,9 @@ RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
     ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
     ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
-# Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit
-
-# Install Project Zomboid (Box86 for 32 bit steamcmd)
-RUN box86 /home/steam/Steam/linux32/steamcmd \
+# Prime and Run SteamCMD in a single layer
+RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
+    /home/steam/Steam/steamcmd.sh \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
