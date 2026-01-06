@@ -73,6 +73,10 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
+# This helps box86 find the 32-bit linker
+ENV BOX86_LD_LIBRARY_PATH=/home/steam/Steam/linux32:/lib/i386-linux-gnu:/usr/lib/i386-linux-gnu:/usr/lib/arm-linux-gnueabihf
+ENV BOX86_PATH=/home/steam/Steam/linux32
+
 # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
 RUN box86 /home/steam/Steam/steamcmd.sh +login anonymous +quit
 
