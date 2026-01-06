@@ -47,14 +47,17 @@ RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
 FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add armhf architecture for 32-bit library support (SteamCMD needs this)
+# Add BOTH armhf (for SteamCMD) and amd64 (for Zomboid x86_64 libs)
 RUN dpkg --add-architecture armhf && \
+    dpkg --add-architecture amd64 && \
     apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     openjdk-21-jdk-headless \
-    # 32-bit ARM libs (These are the "bridge" for Box86)
-    libc6:armhf libstdc++6:armhf libncurses5:armhf \
-    # 64-bit Native ARM libs for Zomboid
+    # 32-bit ARM libs for Box86/SteamCMD
+    libc6:armhf libstdc++6:armhf \
+    # 64-bit x86 libs for Box64/Zomboid (THIS IS WHAT YOU ARE MISSING)
+    libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
+    # Native ARM libs
     libsdl2-2.0-0 libepoxy0 libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -77,11 +80,6 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
-# 3. SDK Symlinks
-# RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
-#     ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
-#     ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
-
 # Prime and Run SteamCMD in a single layer
 RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
     /home/steam/Steam/steamcmd.sh \
@@ -92,16 +90,17 @@ RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
     +quit
 
 USER root
-RUN mkdir -p /usr/lib/x86_64-linux-gnu && \
-    ln -sf /home/steam/Zomboid/linux64/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so.6 && \
-    ln -sf /home/steam/Zomboid/linux64/libgcc_s.so.1 /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 && \
+RUN mkdir -p /home/steam/Zomboid/linux64 && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /home/steam/Zomboid/linux64/libstdc++.so.6 && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libgcc_s.so.1 /home/steam/Zomboid/linux64/libgcc_s.so.1 && \
     mkdir -p /home/steam/.steam/sdk64 && \
     ln -sf /home/steam/Zomboid/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
 # Box64 Optimizations for Project Zomboid
+ENV BOX64_JVM=1
+ENV BOX64_DYNAREC_BIGBLOCK=0
 ENV BOX64_DYNAREC_STRONGMEM=1
-ENV BOX64_LD_LIBRARY_PATH="/home/steam/Zomboid/linux64:/home/steam/Zomboid/natives:/usr/lib/x86_64-linux-gnu"
-ENV LD_LIBRARY_PATH="/home/steam/Zomboid/linux64:/home/steam/Zomboid/natives"
+ENV LD_LIBRARY_PATH="/home/steam/Zomboid/linux64:/home/steam/Zomboid/natives:/home/steam/Zomboid/jre64/lib:."
 
 USER steam
 WORKDIR /home/steam
