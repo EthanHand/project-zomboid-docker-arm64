@@ -18,11 +18,12 @@ RUN dpkg --add-architecture armhf && \
     libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Build Box86 (For SteamCMD 32 bit)
-WORKDIR /build/box86
+# Build Box86 (SteamCMD 32 bit)
+WORKDIR /home/box86
 RUN git clone --depth 1 https://github.com/ptitSeb/box86.git . && \
     mkdir build && cd build && \
     cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc \
       -DARM_DYNAREC=ON \
       -DARM64=1 \
@@ -31,11 +32,11 @@ RUN git clone --depth 1 https://github.com/ptitSeb/box86.git . && \
     ninja && ninja install
 
 # Build Box64 (Zomboid Server 64 bit)
-# Build Box64
-WORKDIR /build/box64
+WORKDIR /home/box64
 RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
     mkdir build && cd build && \
     cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
       -DARM64=1 \
       -DARM64_DYNAREC=ON \
       -DCMAKE_BUILD_TYPE=Release \
@@ -57,10 +58,8 @@ RUN dpkg --add-architecture armhf && apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
-COPY --from=builder /usr/local/bin/box86 /usr/local/bin/box86
-COPY --from=builder /usr/local/bin/box64 /usr/local/bin/box64
-COPY --from=builder /usr/local/lib/box86 /usr/local/lib/box86
-COPY --from=builder /usr/local/lib/box64 /usr/local/lib/box64
+COPY --from=builder /usr/bin/box86 /usr/bin/box86
+COPY --from=builder /usr/bin/box64 /usr/bin/box64
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
