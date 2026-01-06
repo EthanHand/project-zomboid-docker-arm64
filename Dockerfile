@@ -52,21 +52,24 @@ RUN dpkg --add-architecture armhf && \
     dpkg --add-architecture amd64
 
 # 2. Configure Ubuntu 24.04 DEB822 Sources for Multi-Arch
-RUN sed -i 's/Types: deb/Architectures: arm64 armhf\nTypes: deb/g' /etc/apt/sources.list.d/ubuntu.sources && \
-    # Now we create a specific source for the amd64 (x86_64) packages
-    echo "Types: deb\n\
-URIs: http://archive.ubuntu.com/ubuntu/\n\
-Suites: noble noble-updates noble-backports\n\
-Components: main universe restricted multiverse\n\
-Architectures: amd64\n\
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" > /etc/apt/sources.list.d/amd64.sources && \
-    # Add Security sources for amd64
-    echo "Types: deb\n\
-URIs: http://security.ubuntu.com/ubuntu/\n\
-Suites: noble-security\n\
-Components: main universe restricted multiverse\n\
-Architectures: amd64\n\
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/amd64.sources
+RUN sed -i 's/Types: deb/Architectures: arm64 armhf\nTypes: deb/g' /etc/apt/sources.list.d/ubuntu.sources
+
+# Create the amd64 source file with EXACT formatting
+RUN cat <<EOF > /etc/apt/sources.list.d/amd64.sources
+Types: deb
+URIs: http://archive.ubuntu.com/ubuntu/
+Suites: noble noble-updates noble-backports
+Components: main universe restricted multiverse
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: http://security.ubuntu.com/ubuntu/
+Suites: noble-security
+Components: main universe restricted multiverse
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+EOF
 
 # 3. Clean Update and Install
 RUN apt-get update && apt-get install -y \
