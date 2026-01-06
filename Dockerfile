@@ -91,10 +91,16 @@ RUN /home/steam/Steam/steamcmd.sh +login anonymous +quit || true && \
     +app_update 380870 -beta 42.13.1 validate \
     +quit
 
-EXPOSE 16261-16262/udp 27015/tcp
+RUN wget https://download.oracle.com/java/25/latest/jdk-25_linux-aarch64_bin.tar.gz && \
+    tar -xvf jdk-25_linux-aarch64_bin.tar.gz && \
+    mv jdk-25* /opt/jdk-25 && \
+    rm jdk-25_linux-aarch64_bin.tar.gz
 
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-arm64
+# Set Environment Paths for the new Java
+ENV JAVA_HOME=/opt/jdk-25
 ENV PATH=$JAVA_HOME/bin:$PATH
+
+EXPOSE 16261-16262/udp 27015/tcp
 
 WORKDIR /home/steam/Zomboid
 
