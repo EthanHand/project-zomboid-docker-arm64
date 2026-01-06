@@ -81,10 +81,10 @@ RUN echo '#!/bin/bash\nbox86 /home/steam/Steam/linux32/steamcmd "$@"' > /usr/bin
 USER steam
 
 # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN box86 steamcmd +login anonymous +quit
+RUN steamcmd +login anonymous +quit
 
 # Install Project Zomboid (Box86 for 32 bit steamcmd)
-RUN box86 steamcmd \
+RUN steamcmd \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
