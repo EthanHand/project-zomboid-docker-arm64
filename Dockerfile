@@ -82,7 +82,7 @@ RUN mv /home/steam/Steam/linux32/steamcmd /home/steam/Steam/linux32/steamcmd.exe
 USER steam
 
 # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN steamcmd +login anonymous +quit
+RUN steamcmd +login anonymous +quit || true
 
 # Install Project Zomboid (Box86 for 32 bit steamcmd)
 RUN steamcmd \
