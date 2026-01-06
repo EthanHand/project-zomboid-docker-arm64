@@ -48,11 +48,14 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Add armhf architecture for 32-bit library support (SteamCMD needs this)
-RUN dpkg --add-architecture armhf && apt-get update && apt-get install -y \
+RUN dpkg --add-architecture armhf && \
+    dpkg --add-architecture i386 && \
+    apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     openjdk-21-jdk-headless \
-    # 32-bit libs for Box86/SteamCMD
+    # 32-bit libs (armhf for box86, i386 for the emulated app)
     libc6:armhf libstdc++6:armhf libncurses5:armhf \
+    libc6:i386 libstdc++6:i386 \
     # 64-bit libs for Zomboid
     libsdl2-2.0-0 libepoxy0 libssl3 \
     && rm -rf /var/lib/apt/lists/*
@@ -60,6 +63,9 @@ RUN dpkg --add-architecture armhf && apt-get update && apt-get install -y \
 # Copy emulators from builder
 COPY --from=builder /usr/bin/box86 /usr/bin/box86
 COPY --from=builder /usr/bin/box64 /usr/bin/box64
+
+ENV DEBUGGER "/usr/local/bin/box86"
+ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:${LD_LIBRARY_PATH}"
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
@@ -73,11 +79,13 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
-# Update steamcmd.sh script to use box86
-RUN sed -i 's/exec "$SCOM"/exec box86 "$SCOM"/g' /home/steam/Steam/steamcmd.sh
+# 3. SDK Symlinks
+RUN mkdir -p /home/steam/.steam/sdk32 /home/steam/.steam/sdk64 && \
+    ln -s /home/steam/Steam/linux32/steamclient.so /home/steam/.steam/sdk32/steamclient.so && \
+    ln -s /home/steam/Steam/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
 # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit || true
+RUN box86 /home/steam/Steam/linux32/steamcmd +login anonymous +quit
 
 # Install Project Zomboid (Box86 for 32 bit steamcmd)
 RUN box86 /home/steam/Steam/linux32/steamcmd \
