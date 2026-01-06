@@ -63,7 +63,7 @@ COPY --from=builder /usr/bin/box86 /usr/bin/box86
 COPY --from=builder /usr/bin/box64 /usr/bin/box64
 
 ENV DEBUGGER "/usr/bin/box86"
-ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/arm-linux-gnueabihf:${LD_LIBRARY_PATH}"
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
