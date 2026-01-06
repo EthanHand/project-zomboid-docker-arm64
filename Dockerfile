@@ -50,12 +50,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Add BOTH armhf (for SteamCMD) and amd64 (for Zomboid x86_64 libs)
 RUN dpkg --add-architecture armhf && \
     dpkg --add-architecture amd64 && \
+    sed -i 's/deb http/deb [arch=arm64,armhf] http/g' /etc/apt/sources.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy main universe" >> /etc/apt/sources.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates main universe" >> /etc/apt/sources.list && \
+    echo "deb [arch=amd64] http://security.ubuntu.com/ubuntu/ jammy-security main universe" >> /etc/apt/sources.list && \
     apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     openjdk-21-jdk-headless \
-    # 32-bit ARM libs for Box86/SteamCMD
+    # 32-bit ARM libs (SteamCMD)
     libc6:armhf libstdc++6:armhf \
-    # 64-bit x86 libs for Box64/Zomboid (THIS IS WHAT YOU ARE MISSING)
+    # 64-bit x86 libs (Zomboid dependencies)
     libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
     # Native ARM libs
     libsdl2-2.0-0 libepoxy0 libssl3 \
