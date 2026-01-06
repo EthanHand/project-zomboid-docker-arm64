@@ -52,10 +52,9 @@ RUN dpkg --add-architecture armhf && \
     apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     openjdk-21-jdk-headless \
-    # 32-bit libs (armhf for box86, i386 for the emulated app)
+    # 32-bit ARM libs (These are the "bridge" for Box86)
     libc6:armhf libstdc++6:armhf libncurses5:armhf \
-    libc6:i386 libstdc++6:i386 \
-    # 64-bit libs for Zomboid
+    # 64-bit Native ARM libs for Zomboid
     libsdl2-2.0-0 libepoxy0 libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
