@@ -1,6 +1,6 @@
 # Box64
 # === STAGE 1: BUILDER ===
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:24.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies for box64 and box86
@@ -44,7 +44,7 @@ RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
     ninja && ninja install
 
 # === STAGE 2: RUNNER ===
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Add BOTH armhf (for SteamCMD) and amd64 (for Zomboid x86_64 libs)
@@ -56,7 +56,6 @@ RUN dpkg --add-architecture armhf && \
     echo "deb [arch=amd64] http://security.ubuntu.com/ubuntu/ jammy-security main universe" >> /etc/apt/sources.list && \
     apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
-    openjdk-21-jdk-headless \
     # 32-bit ARM libs (SteamCMD)
     libc6:armhf libstdc++6:armhf \
     # 64-bit x86 libs (Zomboid dependencies)
