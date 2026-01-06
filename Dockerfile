@@ -49,7 +49,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Add armhf architecture for 32-bit library support (SteamCMD needs this)
 RUN dpkg --add-architecture armhf && \
-    dpkg --add-architecture i386 && \
     apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     openjdk-21-jdk-headless \
