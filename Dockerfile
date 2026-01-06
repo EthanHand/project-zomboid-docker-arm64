@@ -74,14 +74,17 @@ RUN mkdir -p /home/steam/Steam /home/steam/Zomboid && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam
 
 # Wrapper to force steamcmd to use box86
-RUN echo '#!/bin/bash\nbox86 /home/steam/Steam/linux32/steamcmd "$@"' > /home/steam/steamcmd_wrapper.sh && \
-    chmod +x /home/steam/steamcmd_wrapper.sh
+USER root
+RUN echo '#!/bin/bash\nbox86 /home/steam/Steam/linux32/steamcmd "$@"' > /usr/bin/steamcmd && \
+    chmod +x /usr/bin/steamcmd
+
+USER steam
 
 # Prime SteamCMD (Initializes the environment and updates SteamCMD itself)
-RUN box86 /home/steam/steamcmd_wrapper.sh +login anonymous +quit
+RUN box86 steamcmd +login anonymous +quit
 
 # Install Project Zomboid (Box86 for 32 bit steamcmd)
-RUN box86 /home/steam/steamcmd_wrapper.sh \
+RUN box86 steamcmd \
     +@sSteamCmdForcePlatformType linux \
     +force_install_dir /home/steam/Zomboid/ \
     +login anonymous \
