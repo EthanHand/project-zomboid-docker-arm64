@@ -52,18 +52,28 @@ RUN dpkg --add-architecture armhf && \
     libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Build Box86 (SteamCMD 32 bit)
+# Build Box86 (For SteamCMD 32 bit)
 WORKDIR /build/box86
-RUN git clone https://github.com/ptitSeb/box86.git . && \
+RUN git clone --depth 1 https://github.com/ptitSeb/box86.git . && \
     mkdir build && cd build && \
-    cmake .. -DARM_DYNAREC=ON -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+    cmake .. \
+      -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc \
+      -DARM_DYNAREC=ON \
+      -DARM64=1 \
+      -DCMAKE_BUILD_TYPE=Release \
+      -G Ninja && \
     ninja && ninja install
 
 # Build Box64 (Zomboid Server 64 bit)
+# Build Box64
 WORKDIR /build/box64
-RUN git clone https://github.com/ptitSeb/box64.git . && \
+RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
     mkdir build && cd build && \
-    cmake .. -DARM64=1 -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+    cmake .. \
+      -DARM64=1 \
+      -DARM64_DYNAREC=ON \
+      -DCMAKE_BUILD_TYPE=Release \
+      -G Ninja && \
     ninja && ninja install
 
 # === STAGE 2: RUNNER ===
@@ -149,6 +159,9 @@ RUN box86 /home/steam/Steam/steamcmd.sh \
     +quit
 
 EXPOSE 16261-16262/udp 27015/tcp
+
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-arm64
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 WORKDIR /home/steam/Zomboid
 
