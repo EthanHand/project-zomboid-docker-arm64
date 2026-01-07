@@ -71,15 +71,14 @@ Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 EOF
 
-# 3. Clean Update and Install
+# 3. Update and Install System Dependencies
 RUN apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
-    # 32-bit ARM libs (SteamCMD/Box86)
-    libc6:armhf libstdc++6:armhf \
-    # 64-bit x86 libs (Box64/Zomboid Natives)
+    # x86_64 libs for Box64 to wrap (The Core Fix)
     libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
     libsdl3-0:amd64 libsqlite3-0:amd64 \
-    # Native ARM Java (Box64-JVM optimized)
+    # ARM libs for SteamCMD/Box86
+    libc6:armhf libstdc++6:armhf \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
