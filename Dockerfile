@@ -61,8 +61,8 @@ WORKDIR /home/steam
 
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
-    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/kitaqysuk87zi8fdck9ta/Ubuntu_25_04.tar.gz?rlkey=vzs0cn506oz2i4czmyti9206q&st=65p3rff3&dl=1" && \
-    tar xzf /tmp/Ubuntu_25_04.tar.gz --exclude='dev/*' -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
+    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/fft26alkdzua2xjabdgmt/Ubuntu_25_04.tar.gz?rlkey=16rcw2df8sr6025i1n061pje7&st=tsjcw1hp&dl=1" && \
+    tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
