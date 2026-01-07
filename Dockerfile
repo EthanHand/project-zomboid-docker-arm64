@@ -40,11 +40,14 @@ WORKDIR /rootfs_prep
 COPY --from=rootfs_source / /rootfs_prep/
 
 RUN dpkg --add-architecture amd64 && \
-    # Create a specific source list for amd64
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky main reserved universe multiverse" > /etc/apt/sources.list.d/amd64.list && \
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-updates main reserved universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-security main reserved universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
-    # Update only the amd64 sources to avoid conflicting with ARM ports
+    # 1. Update existing sources to be arm64-only
+    sed -i 's/deb http/deb [arch=arm64] http/g' /etc/apt/sources.list.d/*.list || true && \
+    sed -i 's/deb http/deb [arch=arm64] http/g' /etc/apt/sources.list || true && \
+    # 2. Add the correct amd64 archives
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky main restricted universe multiverse" > /etc/apt/sources.list.d/amd64.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-security main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
+    # 3. Update and download
     apt-get update && \
     apt-get download \
         libsdl3-0:amd64 \
