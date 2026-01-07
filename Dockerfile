@@ -63,8 +63,9 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
     wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/fft26alkdzua2xjabdgmt/Ubuntu_25_04.tar.gz?rlkey=16rcw2df8sr6025i1n061pje7&st=tsjcw1hp&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
-    sudo mkdir -p /lib64 && \
-    sudo ln -s /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
+    sudo mkdir -p /lib/x86_64-linux-gnu /lib64 && \
+    sudo ln -s /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 && \
+    sudo ln -s /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
@@ -80,8 +81,6 @@ RUN echo '{ \
     "WaitGui": 0 \
   } \
 }' > /home/steam/.fex-emu/Config.json
-
-RUN ls -l /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2
 
 # Prime SteamCMD
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
