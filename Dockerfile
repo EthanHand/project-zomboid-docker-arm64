@@ -54,7 +54,6 @@ RUN dpkg --add-architecture armhf && \
 # 2. Configure Ubuntu 24.04 DEB822 Sources for Multi-Arch
 RUN sed -i 's/Types: deb/Architectures: arm64 armhf\nTypes: deb/g' /etc/apt/sources.list.d/ubuntu.sources
 
-# Create the amd64 source file with EXACT formatting
 RUN cat <<EOF > /etc/apt/sources.list.d/amd64.sources
 Types: deb
 URIs: http://archive.ubuntu.com/ubuntu/
@@ -71,22 +70,16 @@ Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 EOF
 
-# 3. Update and Install System Dependencies
+# 3. Clean Update and Install
+# NOTE: We use libsdl3-0 (no dev) and ensure we pull sqlite3
 RUN apt-get update && apt-get install -y \
-    curl \
-    sudo \
-    wget \
-    nano \
-    tmux \
-    ca-certificates \
-    libc6:armhf \
-    libstdc++6:armhf \
-    libc6:amd64 \
-    libstdc++6:amd64 \
-    libgcc-s1:amd64 \
-    libsdl3-0:amd64 \
-    libsqlite3-0:amd64 && \
-    rm -rf /var/lib/apt/lists/*
+    curl sudo wget nano tmux ca-certificates \
+    libc6:armhf libstdc++6:armhf \
+    libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
+    libsqlite3-0:amd64 \
+    # Using the specific versioned package name for SDL3
+    libsdl3-0:amd64 || apt-get install -y libsdl3-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
 COPY --from=builder /usr/bin/box86 /usr/bin/box86
