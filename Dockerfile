@@ -72,7 +72,8 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
 # Prime SteamCMD
-RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
+RUN FEX_ROOTFS=/home/steam/.fex-emu/RootFS/Ubuntu_25_04 \
+    FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
 
 # Install Project Zomboid
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
