@@ -31,7 +31,9 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DENABLE_LTO=True \
     -DBUILD_THUNKS=True \
     -DBUILD_TESTS=False -G Ninja .. && \
-    ninja install
+    ninja install && \
+    mkdir -p /tmp/fex-export/lib && \
+    cp -r /usr/lib/*-linux-gnu/fex-emu /tmp/fex-export/lib/fex-emu
 
 # === STAGE 2: RUNNER ===
 FROM ubuntu:25.04
@@ -47,7 +49,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
 COPY --from=builder /usr/bin/FEX* /usr/bin/
-COPY --from=builder /usr/lib/fex-emu /usr/lib/fex-emu
+COPY --from=builder /tmp/fex-export/lib/fex-emu /usr/lib/fex-emu
 COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
 COPY --from=builder /Ubuntu_25_04.tar.gz /tmp/
 
