@@ -162,9 +162,19 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     cd FEX && \
     git checkout a08a6ce5de51f5e625357ecaed46c463aa1e3c99 && \
     mkdir Build && cd Build && \
-    CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-    -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -G Ninja .. && \
+    CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DUSE_LINKER=lld \
+    -DENABLE_LTO=True \
+    -DBUILD_THUNKS=True \
+    -DBUILD_TESTS=False -G Ninja .. && \
     ninja install
+
+WORKDIR /rootfs_build
+RUN debootstrap --arch=amd64 plucky ./ubuntu_25_04 http://archive.ubuntu.com/ubuntu/ && \
+    chroot ./ubuntu_25_04 apt-get update && \
+    chroot ./ubuntu_25_04 apt-get install -y libsdl3-0 libssl3t64 libepoxy0 && \
+    tar -czf /ubuntu_25_04.tar.gz -C ./ubuntu_25_04 .
 
 # === STAGE 2: RUNNER ===
 FROM ubuntu:25.04
@@ -187,6 +197,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the finished FEX binaries from the builder
 COPY --from=builder /usr/bin/FEX* /usr/bin/
+COPY --from=builder /usr/lib/fex-emu /usr/lib/fex-emu
+COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
+COPY --from=builder /ubuntu_25_04.tar.gz /tmp/
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
@@ -195,14 +208,22 @@ RUN useradd -m -s /bin/bash steam && \
 USER steam
 WORKDIR /home/steam
 
-# Setup RootFS and SteamCMD
-RUN mkdir -p /home/steam/.fex-emu/RootFS /home/steam/Steam /home/steam/Zomboid && \
-    wget -O /tmp/Ubuntu_22_04.tar.gz "https://www.dropbox.com/scl/fi/16mhn3jrwvzapdw50gt20/Ubuntu_22_04.tar.gz?rlkey=4m256iahwtcijkpzcv8abn7nf" && \
-    tar xzf /tmp/Ubuntu_22_04.tar.gz -C /home/steam/.fex-emu/RootFS/ && \
-    rm /tmp/Ubuntu_22_04.tar.gz && \
-    echo '{"Config":{"RootFS":"Ubuntu_22_04"}}' > /home/steam/.fex-emu/Config.json && \
-    curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
-    sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
+# Setup RootFS
+RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
+    tar xzf /tmp/ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
+    echo '{"Config":{"RootFS":"Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json
+
+# Update the Config.json creation
+RUN echo '{ \
+  "Config": { \
+    "RootFS": "Ubuntu_25_04", \
+    "ThunkHostLibs": "/usr/lib/fex-emu/HostThunks", \
+    "ThunkGuestLibs": "/usr/share/fex-emu/GuestThunks" \
+  }, \
+  "App-Config": { \
+    "WaitGui": 0 \
+  } \
+}' > /home/steam/.fex-emu/Config.json
 
 # Prime SteamCMD
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
