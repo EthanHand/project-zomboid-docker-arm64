@@ -31,9 +31,9 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DENABLE_LTO=True \
     -DBUILD_THUNKS=True \
     -DBUILD_TESTS=False -G Ninja .. && \
-    ninja install && \
-    mkdir -p /tmp/fex-export/lib && \
-    cp -r /usr/lib/*-linux-gnu/fex-emu /tmp/fex-export/lib/fex-emu
+    ninja install
+    # mkdir -p /tmp/fex-export/lib && \
+    # cp -r /usr/lib/*-linux-gnu/fex-emu /tmp/fex-export/lib/fex-emu
 
 # === STAGE 2: RUNNER ===
 FROM ubuntu:25.04
@@ -49,8 +49,8 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
 COPY --from=builder /usr/bin/FEX* /usr/bin/
-COPY --from=builder /tmp/fex-export/lib/fex-emu /usr/lib/fex-emu
-COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
+# COPY --from=builder /tmp/fex-export/lib/fex-emu /usr/lib/fex-emu
+# COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
@@ -64,9 +64,9 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     curl -L -o /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/cp57fwsogtiiwu3jdmu3d/Ubuntu_25_04.tar.gz?rlkey=i1amkivsq2ob5or2dpzv5ygjf&st=b3lk7h6x&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     # Link the loader from the RootFS to the host side
-    sudo ln -s /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
+    # sudo ln -s /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
-    echo '{"Config":{"RootFS":"/home/steam/.fex-emu/RootFS/Ubuntu_25_04","FEX_ThunkHostLibs":"/usr/lib/fex-emu/HostThunks","FEX_ThunkGuestLibs":"/usr/share/fex-emu/GuestThunks"}}' > /home/steam/.fex-emu/Config.json && \
+    echo '{"Config":{"RootFS":"/home/steam/.fex-emu/RootFS/Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
