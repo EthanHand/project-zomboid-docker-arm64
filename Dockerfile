@@ -45,17 +45,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Note: libssl3 has been replaced by libssl3t64 in newer Ubuntu versions
 RUN apt-get update && apt-get install -y \
-    libsdl2-2.0-0 libepoxy0 libssl3t64 \
+    libsdl3-0 libsdl2-2.0-0 libepoxy0 libssl3t64 \
     squashfuse libc-bin \
-    curl \
-    sudo \
-    wget \
-    vim \
-    nano \
-    tmux \
-    binfmt-support \
-    libqt6gui6 \
-    libqt6widgets6 && \
+    curl sudo wget vim nano tmux \
+    binfmt-support libqt6gui6 libqt6widgets6 && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the finished FEX binaries from the builder
