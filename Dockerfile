@@ -62,7 +62,7 @@ WORKDIR /home/steam
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS /home/steam/Steam /home/steam/Zomboid && \
     wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/fft26alkdzua2xjabdgmt/Ubuntu_25_04.tar.gz?rlkey=16rcw2df8sr6025i1n061pje7&st=tsjcw1hp&dl=1" && \
-    tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/ && \
+    tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     sudo mkdir -p /lib64 && \
     # Link the loader from the RootFS to the host side
     sudo ln -s /home/steam/.fex-emu/RootFS/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
