@@ -71,7 +71,7 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib/x86_64-linux-gnu && \
     ln -sf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
-    echo '{"Config":{"RootFS":"/home/steam/.fex-emu/RootFS/Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
+    echo '{"Config":{"RootFS":"Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
