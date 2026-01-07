@@ -65,13 +65,13 @@ Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 EOF
 
-# 3. Install Dependencies (SDL3 is now native!)
+# 3. Install Dependencies
 RUN apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     libc6:armhf libstdc++6:armhf \
     libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
     libsdl3-0:amd64 libsqlite3-0:amd64 \
-    openjdk-25-jdk-headless \
+    libnuma1:amd64 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
