@@ -8,11 +8,14 @@ RUN apt-get update && apt-get install -y \
     git cmake ninja-build pkg-config ccache clang llvm lld \
     binfmt-support libsdl2-dev libepoxy-dev libssl-dev \
     python3 python3-setuptools nasm python3-clang \
-    g++-x86-64-linux-gnu \
-    gcc-multilib g++-multilib \
+    # Cross-compilers for the Guest Thunks
+    gcc-x86-64-linux-gnu g++-x86-64-linux-gnu \
+    gcc-i686-linux-gnu g++-i686-linux-gnu \
+    # Specific headers for Ubuntu 25.04
     libstdc++-14-dev-i386-cross \
     libstdc++-14-dev-amd64-cross \
     libstdc++-14-dev-arm64-cross \
+    # Utilities
     squashfs-tools squashfuse libc-bin expect curl sudo fuse3 \
     qt6-base-dev qt6-declarative-dev wget debootstrap && \
     rm -rf /var/lib/apt/lists/*
