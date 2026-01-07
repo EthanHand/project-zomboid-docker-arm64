@@ -73,13 +73,20 @@ EOF
 
 # 3. Update and Install System Dependencies
 RUN apt-get update && apt-get install -y \
-    curl sudo wget nano tmux ca-certificates \
-    # x86_64 libs for Box64 to wrap (The Core Fix)
-    libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
-    libsdl3-0:amd64 libsqlite3-0:amd64 \
-    # ARM libs for SteamCMD/Box86
-    libc6:armhf libstdc++6:armhf \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    sudo \
+    wget \
+    nano \
+    tmux \
+    ca-certificates \
+    libc6:armhf \
+    libstdc++6:armhf \
+    libc6:amd64 \
+    libstdc++6:amd64 \
+    libgcc-s1:amd64 \
+    libsdl3-0:amd64 \
+    libsqlite3-0:amd64 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
 COPY --from=builder /usr/bin/box86 /usr/bin/box86
