@@ -61,9 +61,8 @@ WORKDIR /home/steam
 
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
-    curl -L -o /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/cp57fwsogtiiwu3jdmu3d/Ubuntu_25_04.tar.gz?rlkey=i1amkivsq2ob5or2dpzv5ygjf&st=b3lk7h6x&dl=1" && \
+    curl -L -o /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/5v2a1kklhn0n9m7frohku/ubuntu-25.04.tar.gz?rlkey=rq1vo9fm1b2255hel6joq22tk&st=wzdvf3jf&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
-    # --- THE FIX ---
     sudo mkdir -p /lib64 && \
     # Link 1: The Host-side link (Absolute path)
     sudo ln -sf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
