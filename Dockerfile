@@ -81,6 +81,8 @@ RUN echo '{ \
   } \
 }' > /home/steam/.fex-emu/Config.json
 
+RUN ls -l /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2
+
 # Prime SteamCMD
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
 
