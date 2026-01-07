@@ -132,29 +132,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install updated dependencies for 25.04
 RUN apt-get update && apt-get install -y \
-    git \
-    cmake \
-    ninja-build \
-    pkg-config \
-    ccache \
-    clang \
-    llvm \
-    lld \
-    binfmt-support \
-    libsdl2-dev libepoxy-dev libssl-dev \
+    git cmake ninja-build pkg-config ccache clang llvm lld \
+    binfmt-support libsdl2-dev libepoxy-dev libssl-dev \
     python3 python3-setuptools nasm python3-clang \
     g++-x86-64-linux-gnu \
-    libstdc++-dev-i386-cross \
-    libstdc++-dev-amd64-cross \
-    libstdc++-dev-arm64-cross \
-    squashfs-tools squashfuse \
-    libc-bin \
-    expect \
-    curl \
-    sudo \
-    fuse3 \
-    qt6-base-dev qt6-declarative-dev \
-    wget && \
+    libstdc++-14-dev-i386-cross \
+    libstdc++-14-dev-amd64-cross \
+    libstdc++-14-dev-arm64-cross \
+    squashfs-tools squashfuse libc-bin expect curl sudo fuse3 \
+    qt6-base-dev qt6-declarative-dev wget debootstrap && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/fex
