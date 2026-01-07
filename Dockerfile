@@ -78,9 +78,6 @@ RUN echo '{ \
     "RootFS": "/home/steam/.fex-emu/RootFS/Ubuntu_25_04", \
     "ThunkHostLibs": "/usr/lib/fex-emu/HostThunks", \
     "ThunkGuestLibs": "/usr/share/fex-emu/GuestThunks" \
-  }, \
-  "App-Config": { \
-    "WaitGui": 0 \
   } \
 }' > /home/steam/.fex-emu/Config.json
 
