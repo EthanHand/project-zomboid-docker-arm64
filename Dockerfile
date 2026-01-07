@@ -1,8 +1,6 @@
 # FEX
 # === STAGE 0: Create the 25.04 RootFS ===
 FROM --platform=linux/amd64 ubuntu:25.04 AS rootfs_source
-RUN apt-get update && apt-get install -y libsdl3-0 libssl3t64 libepoxy0 libc-bin
-RUN tar -czf /Ubuntu_25_04.tar.gz --exclude=proc --exclude=sys --exclude=dev /
 
 # === STAGE 1: BUILDER ===
 FROM ubuntu:25.04 AS builder
@@ -38,6 +36,20 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DBUILD_TESTS=False -G Ninja .. && \
     ninja install
 
+WORKDIR /rootfs_prep
+COPY --from=rootfs_source / /rootfs_prep/
+
+RUN dpkg --add-architecture amd64 && apt-get update && \
+    apt-get download \
+    libsdl3-0:amd64 \
+    libsdl2-2.0-0:amd64 \
+    libssl3t64:amd64 \
+    libepoxy0:amd64 \
+    libasound2t64:amd64 && \
+    for f in *.deb; do dpkg-deb -x "$f" /rootfs_prep/; done && \
+    rm *.deb && \
+    tar -czf /Ubuntu_25_04.tar.gz --exclude=proc --exclude=sys --exclude=dev -C /rootfs_prep .
+
 # === STAGE 2: RUNNER ===
 FROM ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
@@ -54,7 +66,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=builder /usr/bin/FEX* /usr/bin/
 COPY --from=builder /usr/lib/fex-emu /usr/lib/fex-emu
 COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
-COPY --from=rootfs_source /Ubuntu_25_04.tar.gz /tmp/
+COPY --from=builder /Ubuntu_25_04.tar.gz /tmp/
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
