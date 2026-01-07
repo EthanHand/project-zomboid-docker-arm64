@@ -1,6 +1,6 @@
 # Box64
 # === STAGE 1: BUILDER ===
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:25.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies for box64 and box86
@@ -44,41 +44,34 @@ RUN git clone --depth 1 https://github.com/ptitSeb/box64.git . && \
     ninja && ninja install
 
 # === STAGE 2: RUNNER ===
-FROM ubuntu:24.04
+FROM ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Enable multiple architectures
+# 1. Enable Architectures
 RUN dpkg --add-architecture armhf && \
     dpkg --add-architecture amd64
 
-# 2. Configure Ubuntu 24.04 DEB822 Sources for Multi-Arch
+# 2. Configure Ubuntu 25.04 (Plucky) Multi-Arch Sources
+# Restrict native sources to ARM
 RUN sed -i 's/Types: deb/Architectures: arm64 armhf\nTypes: deb/g' /etc/apt/sources.list.d/ubuntu.sources
 
+# Add AMD64 Sources for SDL3 and SQLite
 RUN cat <<EOF > /etc/apt/sources.list.d/amd64.sources
 Types: deb
 URIs: http://archive.ubuntu.com/ubuntu/
-Suites: noble noble-updates noble-backports
-Components: main universe restricted multiverse
-Architectures: amd64
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-
-Types: deb
-URIs: http://security.ubuntu.com/ubuntu/
-Suites: noble-security
+Suites: plucky plucky-updates plucky-security
 Components: main universe restricted multiverse
 Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 EOF
 
-# 3. Clean Update and Install
-# NOTE: We use libsdl3-0 (no dev) and ensure we pull sqlite3
+# 3. Install Dependencies (SDL3 is now native!)
 RUN apt-get update && apt-get install -y \
     curl sudo wget nano tmux ca-certificates \
     libc6:armhf libstdc++6:armhf \
     libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 \
-    libsqlite3-0:amd64 \
-    # Using the specific versioned package name for SDL3
-    libsdl3-0:amd64 || apt-get install -y libsdl3-0 \
+    libsdl3-0:amd64 libsqlite3-0:amd64 \
+    openjdk-25-jdk-headless \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy emulators from builder
