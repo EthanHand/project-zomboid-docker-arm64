@@ -39,13 +39,19 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
 WORKDIR /rootfs_prep
 COPY --from=rootfs_source / /rootfs_prep/
 
-RUN dpkg --add-architecture amd64 && apt-get update && \
+RUN dpkg --add-architecture amd64 && \
+    # Create a specific source list for amd64
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky main reserved universe multiverse" > /etc/apt/sources.list.d/amd64.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-updates main reserved universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
+    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-security main reserved universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
+    # Update only the amd64 sources to avoid conflicting with ARM ports
+    apt-get update && \
     apt-get download \
-    libsdl3-0:amd64 \
-    libsdl2-2.0-0:amd64 \
-    libssl3t64:amd64 \
-    libepoxy0:amd64 \
-    libasound2t64:amd64 && \
+        libsdl3-0:amd64 \
+        libsdl2-2.0-0:amd64 \
+        libssl3t64:amd64 \
+        libepoxy0:amd64 \
+        libasound2t64:amd64 && \
     for f in *.deb; do dpkg-deb -x "$f" /rootfs_prep/; done && \
     rm *.deb && \
     tar -czf /Ubuntu_25_04.tar.gz --exclude=proc --exclude=sys --exclude=dev -C /rootfs_prep .
