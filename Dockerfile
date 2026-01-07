@@ -60,7 +60,7 @@ USER steam
 WORKDIR /home/steam
 
 # Setup RootFS
-RUN mkdir -p /home/steam/.fex-emu/RootFS /home/steam/Steam /home/steam/Zomboid && \
+RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
     wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/fft26alkdzua2xjabdgmt/Ubuntu_25_04.tar.gz?rlkey=16rcw2df8sr6025i1n061pje7&st=tsjcw1hp&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     sudo mkdir -p /lib64 && \
