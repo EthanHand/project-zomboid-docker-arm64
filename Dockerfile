@@ -63,11 +63,10 @@ WORKDIR /home/steam
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
     curl -L -o /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/cp57fwsogtiiwu3jdmu3d/Ubuntu_25_04.tar.gz?rlkey=i1amkivsq2ob5or2dpzv5ygjf&st=b3lk7h6x&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
-    sudo mkdir -p /lib64 && \
     # Link the loader from the RootFS to the host side
     sudo ln -s /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
-    echo '{"Config":{"RootFS":"/home/steam/.fex-emu/RootFS/Ubuntu_25_04","ThunkHostLibs":"/usr/lib/fex-emu/HostThunks","ThunkGuestLibs":"/usr/share/fex-emu/GuestThunks"}}' > /home/steam/.fex-emu/Config.json && \
+    echo '{"Config":{"RootFS":"/home/steam/.fex-emu/RootFS/Ubuntu_25_04","FEX_ThunkHostLibs":"/usr/lib/fex-emu/HostThunks","FEX_ThunkGuestLibs":"/usr/share/fex-emu/GuestThunks"}}' > /home/steam/.fex-emu/Config.json && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
