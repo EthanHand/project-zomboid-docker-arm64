@@ -1,7 +1,4 @@
 # FEX
-# === STAGE 0: Create the 25.04 RootFS ===
-FROM --platform=linux/amd64 ubuntu:25.04 AS rootfs_source
-
 # === STAGE 1: BUILDER ===
 FROM ubuntu:25.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
@@ -36,29 +33,6 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DBUILD_TESTS=False -G Ninja .. && \
     ninja install
 
-WORKDIR /rootfs_prep
-COPY --from=rootfs_source / /rootfs_prep/
-
-RUN dpkg --add-architecture amd64 && \
-    # 1. Update existing sources to be arm64-only
-    sed -i 's/deb http/deb [arch=arm64] http/g' /etc/apt/sources.list.d/*.list || true && \
-    sed -i 's/deb http/deb [arch=arm64] http/g' /etc/apt/sources.list || true && \
-    # 2. Add the correct amd64 archives
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky main restricted universe multiverse" > /etc/apt/sources.list.d/amd64.list && \
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
-    echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ plucky-security main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list && \
-    # 3. Update and download
-    apt-get update && \
-    apt-get download \
-        libsdl3-0:amd64 \
-        libsdl2-2.0-0:amd64 \
-        libssl3t64:amd64 \
-        libepoxy0:amd64 \
-        libasound2t64:amd64 && \
-    for f in *.deb; do dpkg-deb -x "$f" /rootfs_prep/; done && \
-    rm *.deb && \
-    tar -czf /Ubuntu_25_04.tar.gz --exclude=proc --exclude=sys --exclude=dev -C /rootfs_prep .
-
 # === STAGE 2: RUNNER ===
 FROM ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
@@ -86,6 +60,7 @@ WORKDIR /home/steam
 
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
+    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/kitaqysuk87zi8fdck9ta/Ubuntu_25_04.tar.gz?rlkey=vzs0cn506oz2i4czmyti9206q&st=65p3rff3&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
