@@ -51,7 +51,6 @@ RUN apt-get update && apt-get install -y \
 COPY --from=builder /usr/bin/FEX* /usr/bin/
 COPY --from=builder /tmp/fex-export/lib/fex-emu /usr/lib/fex-emu
 COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
-COPY --from=builder /Ubuntu_25_04.tar.gz /tmp/
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
