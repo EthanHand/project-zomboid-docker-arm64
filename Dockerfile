@@ -61,7 +61,7 @@ WORKDIR /home/steam
 
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
-    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/zan2626bfid1ssuwprr23/Ubuntu_25_04.tar.gz?rlkey=lc4uv053epzln2sgkd67p57z7&st=ezg7iogz&dl=1" && \
+    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/na3t1pwu1f8hwemtescjd/Ubuntu_25_04.tar.gz?rlkey=vhnm1jeuh09z6406lptn5izrx&st=eo4w8s9q&dl=1" && \
     tar xpzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     sudo cp /etc/resolv.conf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/etc/resolv.conf && \
