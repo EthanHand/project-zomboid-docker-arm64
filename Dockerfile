@@ -29,7 +29,7 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DCMAKE_BUILD_TYPE=Release \
     -DUSE_LINKER=lld \
     -DENABLE_LTO=True \
-    -DBUILD_THUNKS=True \
+    # -DBUILD_THUNKS=True \
     -DBUILD_TESTS=False -G Ninja .. && \
     ninja install
     # mkdir -p /tmp/fex-export/lib && \
@@ -61,14 +61,8 @@ WORKDIR /home/steam
 
 # Setup RootFS
 RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/steam/Zomboid && \
-    curl -L -o /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/5v2a1kklhn0n9m7frohku/ubuntu-25.04.tar.gz?rlkey=rq1vo9fm1b2255hel6joq22tk&st=wzdvf3jf&dl=1" && \
+    wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/spj6pmxrzep0ti78snu0u/Ubuntu_25_04.tar.gz?rlkey=d4e3rtqm8cola91mr1c7lj8p6&st=v35bk1wd&dl=1" && \
     tar xzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
-    sudo mkdir -p /lib64 && \
-    # Link 1: The Host-side link (Absolute path)
-    sudo ln -sf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2 && \
-    # Link 2: Internal RootFS link
-    mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib/x86_64-linux-gnu && \
-    ln -sf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib64/ld-linux-x86-64.so.2 /home/steam/.fex-emu/RootFS/Ubuntu_25_04/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     echo '{"Config":{"RootFS":"Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
@@ -88,3 +82,5 @@ RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
     rm -rf /home/steam/Steam/logs /home/steam/Steam/appcache
 
 EXPOSE 16261-16262/udp 27015/tcp
+
+ENTRYPOINT [ "/bin/bash" ]
