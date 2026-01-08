@@ -13,7 +13,7 @@ This repository provides a Docker image for running a Project Zomboid Dedicated 
 
 ## Pulling from DockerHub
 
-FOR BUILD 42
+## FOR BUILD 42
 
    ```bash
    docker pull docker.io/etheth888/project-zomboid-arm64:build42.13.1
@@ -59,7 +59,7 @@ To build the Docker image, follow these steps:
 
 Once you've built or pulled the Docker image, you can run the container using the following steps:
 
-FOR BUILD 42
+## FOR BUILD 42
 
    ```bash
    docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64:build42.13.1
@@ -75,9 +75,20 @@ FOR BUILD 42
    When you start the container the steamcmd runs and downloads Project Zomboid Dedicated Server automatically.
    The server is downloaded to /home/steam/Zomboid/
 
-FOR BUILD 42
+## FOR BUILD 42
 
-The server sigsev's on player connection adding "-Xint", to ProjectZomboid64.json lets it work but its incredibly slow
+Edit the ProjectZomboid64.json to include these arguments:
+
+   ```bash
+   nano ProjectZomboid64.json
+   ```
+
+   ```bash
+   "-XX:+UseG1GC",
+   "-Dsun.reflect.noInflation=true",
+   "-Djdk.reflect.useDirectMethodHandle=false",
+   "-XX:CompileCommand=exclude,java/lang/Class,reflectionData",
+   ```
 
 2. Start the server to generate server files
 
