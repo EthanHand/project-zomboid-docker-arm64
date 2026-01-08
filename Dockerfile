@@ -64,7 +64,7 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     wget -O /tmp/Ubuntu_25_04.tar.gz "https://www.dropbox.com/scl/fi/zan2626bfid1ssuwprr23/Ubuntu_25_04.tar.gz?rlkey=lc4uv053epzln2sgkd67p57z7&st=ezg7iogz&dl=1" && \
     tar xpzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
-    sudo cp /etc/resolv.conf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/etc/resolv.conf \
+    sudo cp /etc/resolv.conf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/etc/resolv.conf && \
     echo '{"Config":{"RootFS":"Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
