@@ -38,7 +38,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     libsdl3-0 libsdl2-2.0-0 libepoxy0 libssl3t64 \
     squashfuse libc-bin curl sudo wget vim nano tmux \
-    binfmt-support libqt6gui6 libqt6widgets6 && \
+    binfmt-support libqt6gui6 libqt6widgets6 \
     openjdk-25-jre-headless && \
     rm -rf /var/lib/apt/lists/*
 
