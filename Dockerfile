@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y \
     libsdl3-0 libsdl2-2.0-0 libepoxy0 libssl3t64 \
     squashfuse libc-bin curl sudo wget vim nano tmux \
     binfmt-support libqt6gui6 libqt6widgets6 && \
+    openjdk-25-jre-headless && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
@@ -72,6 +73,8 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
+ENV FEX_THUNKHOSTLIBS=/usr/lib/fex-emu/HostThunks/
+
 # Prime SteamCMD
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
 
@@ -88,5 +91,9 @@ RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
 EXPOSE 16261-16262/udp 27015/tcp
 
 WORKDIR /home/steam/Zomboid
+
+# Symlink the native ARM64 Java 25 to the path Zomboid expects
+RUN mv jre64 jre64_backup && \
+    ln -s /usr/lib/jvm/java-25-openjdk-arm64 jre64
 
 ENTRYPOINT [ "/bin/bash" ]
