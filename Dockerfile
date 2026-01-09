@@ -72,8 +72,10 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
-ENV FEX_THUNKHOSTLIBS=/usr/lib/fex-emu/HostThunks/ \
-    FEX_DEBUG_LEVEL=1
+ENV FEX_THUNKHOSTLIBS=/usr/lib/fex-emu/HostThunks/
+ENV FEX_THUNKGUESTLIBS=/usr/share/fex-emu/GuestThunks/
+ENV FEX_LOGFILE=stdout
+ENV FEX_DEBUG_LEVEL=1
 
 # Prime SteamCMD
 RUN FEXInterpreter /home/steam/Steam/steamcmd.sh +login anonymous +quit
