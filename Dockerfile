@@ -1,21 +1,17 @@
 # FEX
 # === STAGE 1: BUILDER ===
-FROM ubuntu:25.04 AS builder
+FROM arm64v8/ubuntu:25.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install updated dependencies for 25.04
+# Install builder dependencies
 RUN apt-get update && apt-get install -y \
     git cmake ninja-build pkg-config ccache clang llvm lld \
-    binfmt-support libsdl2-dev libepoxy-dev libssl-dev \
-    python3 python3-setuptools nasm python3-clang \
-    # Cross-compilers for the Guest Thunks
+    libsdl3-dev libsdl2-dev libepoxy-dev libssl-dev \
+    python3 python3-setuptools nasm python3-clang libclang-dev \
+    # Cross-compilers for Guest Thunks (x86_64 and i686)
     gcc-x86-64-linux-gnu g++-x86-64-linux-gnu \
     gcc-i686-linux-gnu g++-i686-linux-gnu \
-    # Specific headers for Ubuntu 25.04
-    libstdc++-14-dev-i386-cross \
-    libstdc++-14-dev-amd64-cross \
-    libstdc++-14-dev-arm64-cross \
-    # Utilities
+    libstdc++-14-dev-i386-cross libstdc++-14-dev-amd64-cross \
     squashfs-tools squashfuse libc-bin expect curl sudo fuse3 \
     qt6-base-dev qt6-declarative-dev wget debootstrap && \
     rm -rf /var/lib/apt/lists/*
@@ -29,28 +25,26 @@ RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
     -DCMAKE_BUILD_TYPE=Release \
     -DUSE_LINKER=lld \
     -DENABLE_LTO=True \
-    # -DBUILD_THUNKS=True \
+    -DBUILD_THUNKS=True \
     -DBUILD_TESTS=False -G Ninja .. && \
     ninja install
     # mkdir -p /tmp/fex-export/lib && \
     # cp -r /usr/lib/*-linux-gnu/fex-emu /tmp/fex-export/lib/fex-emu
 
 # === STAGE 2: RUNNER ===
-FROM ubuntu:25.04
+FROM arm64v8/ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Note: libssl3 has been replaced by libssl3t64 in newer Ubuntu versions
 RUN apt-get update && apt-get install -y \
     libsdl3-0 libsdl2-2.0-0 libepoxy0 libssl3t64 \
-    squashfuse libc-bin \
-    curl sudo wget vim nano tmux \
+    squashfuse libc-bin curl sudo wget vim nano tmux \
     binfmt-support libqt6gui6 libqt6widgets6 && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
 COPY --from=builder /usr/bin/FEX* /usr/bin/
-# COPY --from=builder /tmp/fex-export/lib/fex-emu /usr/lib/fex-emu
-# COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
+COPY --from=builder /usr/lib/fex-emu /usr/lib/fex-emu
+COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
 
 # Set up the steam user
 RUN useradd -m -s /bin/bash steam && \
@@ -65,7 +59,16 @@ RUN mkdir -p /home/steam/.fex-emu/RootFS/Ubuntu_25_04 /home/steam/Steam /home/st
     tar xpzf /tmp/Ubuntu_25_04.tar.gz -C /home/steam/.fex-emu/RootFS/Ubuntu_25_04/ && \
     rm /tmp/Ubuntu_25_04.tar.gz && \
     sudo cp /etc/resolv.conf /home/steam/.fex-emu/RootFS/Ubuntu_25_04/etc/resolv.conf && \
-    echo '{"Config":{"RootFS":"Ubuntu_25_04"}}' > /home/steam/.fex-emu/Config.json && \
+    echo '{"Config":{"RootFS":"Ubuntu_25_04"},"ThunksDB":{"SDL3":1,"ALSA": 1,"OpenSSL": 1,"GLib": 1}}' > /home/steam/.fex-emu/Config.json && \
+    # This replaces some eumlated libraries with the FEX thunk shim
+    # Define RootFS path for brevity
+    ROOTFS_PATH="/home/steam/.fex-emu/RootFS/Ubuntu_25_04/usr/lib/x86_64-linux-gnu" && \
+    # Symlink all headless shims
+    ln -sf /usr/share/fex-emu/GuestThunks/libSDL3-guest.so     $ROOTFS_PATH/libSDL3.so.0 && \
+    ln -sf /usr/share/fex-emu/GuestThunks/libasound-guest.so   $ROOTFS_PATH/libasound.so.2 && \
+    ln -sf /usr/share/fex-emu/GuestThunks/libssl-guest.so      $ROOTFS_PATH/libssl.so.3 && \
+    ln -sf /usr/share/fex-emu/GuestThunks/libcrypto-guest.so   $ROOTFS_PATH/libcrypto.so.3 && \
+    ln -sf /usr/share/fex-emu/GuestThunks/libglib-2.0-guest.so $ROOTFS_PATH/libglib-2.0.so.0 && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C /home/steam/Steam && \
     sed -i '/ulimit -n/d' /home/steam/Steam/steamcmd.sh
 
