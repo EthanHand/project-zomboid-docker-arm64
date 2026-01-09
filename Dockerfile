@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
 COPY --from=builder /usr/bin/FEX* /usr/bin/
-COPY --from=builder /usr/lib/fex-emu /usr/lib/fex-emu
+COPY --from=builder /usr/lib/*/fex-emu /usr/lib/fex-emu
 COPY --from=builder /usr/share/fex-emu /usr/share/fex-emu
 
 # Set up the steam user
