@@ -5,14 +5,22 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install builder dependencies
 RUN apt-get update && apt-get install -y \
-    git cmake ninja-build pkg-config ccache clang llvm lld \
-    libsdl3-dev libsdl2-dev libepoxy-dev libssl-dev \
-    python3 python3-setuptools nasm python3-clang libclang-dev \
-    gcc-x86-64-linux-gnu g++-x86-64-linux-gnu \
-    gcc-i686-linux-gnu g++-i686-linux-gnu \
-    libstdc++-14-dev-i386-cross libstdc++-14-dev-amd64-cross \
-    squashfs-tools squashfuse libc-bin expect curl sudo fuse3 \
-    qt6-base-dev qt6-declarative-dev wget debootstrap && \
+    git \
+    cmake \
+    ninja-build \
+    pkg-config \
+    ccache \
+    clang \
+    llvm \
+    lld \
+    python3 python3-setuptools \
+    squashfs-tools squashfuse \
+    qt6-base-dev qt6-declarative-dev \
+    libc-bin \
+    curl \
+    sudo \
+    fuse3 \
+    wget && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/fex
@@ -33,9 +41,17 @@ FROM arm64v8/ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    libsdl3-0 libsdl2-2.0-0 libepoxy0 libssl3t64 \
-    squashfuse libc-bin curl sudo wget vim nano tmux \
-    binfmt-support libqt6gui6 libqt6widgets6 && \
+    libsdl3-0 \
+    libssl3t64 \
+    squashfuse \
+    libc-bin \
+    curl \
+    sudo \
+    wget \
+    vim \
+    nano \
+    tmux \
+    binfmt-support && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the finished FEX binaries and trunks from the builder and ubuntu25.04 from rootfs
