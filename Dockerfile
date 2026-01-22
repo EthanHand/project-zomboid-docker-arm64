@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     squashfs-tools squashfuse \
     qt6-base-dev qt6-declarative-dev \
     libc-bin \
+    nasm \
     curl \
     sudo \
     fuse3 \
