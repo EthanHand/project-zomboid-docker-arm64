@@ -16,7 +16,7 @@ This repository provides a Docker image for running a Project Zomboid Dedicated 
 ## FOR BUILD 42
 
    ```bash
-   docker pull docker.io/etheth888/project-zomboid-arm64:build42.13.1
+   docker pull docker.io/etheth888/project-zomboid-arm64:unstable
    ```
 
 1. If using Podman
@@ -62,7 +62,7 @@ Once you've built or pulled the Docker image, you can run the container using th
 ## FOR BUILD 42
 
    ```bash
-   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64:build42.13.1
+   docker run -it --name zomboid-server -p 16261:16261/udp -p 16262:16262/udp -p 27015:27015/tcp project-zomboid-arm64:unstable
    ```
 
 1. Run the Project Zomboid container:
@@ -82,6 +82,8 @@ Edit the ProjectZomboid64.json to include these arguments:
    ```bash
    nano ProjectZomboid64.json
    ```
+
+May need to remove -XX:+UseZGC flag
 
    ```bash
    "-XX:+UseG1GC",
