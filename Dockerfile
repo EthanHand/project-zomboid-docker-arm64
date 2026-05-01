@@ -88,7 +88,7 @@ RUN FEXInterpreter /home/steam/Steam/steamcmd.sh \
     +quit && \
     rm -rf /home/steam/Steam/logs /home/steam/Steam/appcache
 
-EXPOSE 16261-16262/udp 27015/tcp
+EXPOSE 16261/udp 16262/udp 27015/tcp
 
 WORKDIR /home/steam/Zomboid
 
